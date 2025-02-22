@@ -3,6 +3,7 @@ package yoon.bookproject.book_project_2025.config.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,6 +14,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import yoon.bookproject.book_project_2025.dto.JwtToken;
+import yoon.bookproject.book_project_2025.entity.Members;
+import yoon.bookproject.book_project_2025.repository.MembersRepository;
 
 import java.security.Key;
 import java.time.Duration;
@@ -26,12 +29,14 @@ import java.util.stream.Collectors;
 public class JwtTokenProvider {
 
     private final Key key;
+    private final MembersRepository membersRepository;
     public static final long ACCESS_TIME = Duration.ofMinutes(30).toMillis(); // 만료시간 30분
     public static final long REFRESH_TIME = Duration.ofDays(14).toMillis(); // 만료시간 2주
 
-    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
+    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey, MembersRepository membersRepository) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
+        this.membersRepository = membersRepository;
     }
 
     public JwtToken generateToken(Authentication authentication) {
@@ -122,5 +127,28 @@ public class JwtTokenProvider {
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
+    }
+
+    public Long extractMemberId(HttpServletRequest request) {
+
+        //Authorization 헤더에서 토큰 추출
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("유효한 토큰이 존재하지 않습니다. 헤더가 null이거나 Bearer로 시작하지 않습니다.");
+        }
+        String token = authHeader.substring(7);
+
+        //토큰 유효성 검사
+        if (!validateToken(token)) {
+            throw new RuntimeException("유효한 토큰이 존재하지 않습니다.");
+        }
+
+        //토큰에서 claims 추출 후 subject(username) 획득
+        Claims claims = extractClaims(token);
+        String username = claims.getSubject();
+
+        Members members = membersRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."));
+        return members.getMemberId();
     }
 }
