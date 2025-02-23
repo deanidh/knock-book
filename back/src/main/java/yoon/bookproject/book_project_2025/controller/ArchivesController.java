@@ -13,7 +13,7 @@ import yoon.bookproject.book_project_2025.service.ArchivesService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/archives")
+@RequestMapping("/api/archive")
 @Tag(name = "Archives", description = "아카이빙 관련 API")
 public class ArchivesController {
 
@@ -36,16 +36,16 @@ public class ArchivesController {
     }
 
     //아카이브에서 책 삭제
-    @DeleteMapping("/{archiveId}")
+    @DeleteMapping("/{isbn}")
     @Operation(summary = "아카이브 삭제 API", description = "원하는 책을 아카이브에서 삭제하는 API")
-    public ResponseEntity<String> deleteArchives(@PathVariable("archiveId") Long archiveId, HttpServletRequest request) {
+    public ResponseEntity<String> deleteArchives(@PathVariable("isbn") String isbn, HttpServletRequest request) {
         Long memberId = jwtTokenProvider.extractMemberId(request);
-        archivesService.deleteArchives(archiveId, memberId);
+        archivesService.deleteArchives(isbn, memberId);
         return ResponseEntity.ok("아카이브에서 삭제되었습니다.");
     }
 
     //아카이브 목록 조회
-    @GetMapping("/myarchives")
+    @GetMapping("/my")
     @Operation(summary = "아카이브 목록 조회 API", description = "사용자의 아카이브 목록을 조회하는 API")
     public ResponseEntity<List<ArchiveDto>> getArchives(HttpServletRequest request) {
         Long memberId = jwtTokenProvider.extractMemberId(request);
@@ -69,15 +69,15 @@ public class ArchivesController {
     }
 
     //아카이브 정보 수정
-    @PutMapping("/{archiveId}")
+    @PutMapping("/{isbn}")
     @Operation(summary = "아카이브 정보 수정 API", description = "아카이브의 정보를 수정하는 API")
-    public ResponseEntity<String> updateArchives(@PathVariable("archiveId") Long archiveId,
+    public ResponseEntity<String> updateArchives(@PathVariable("isbn") String isbn,
                                                  @RequestBody ArchiveDto archiveDto,
                                                  HttpServletRequest request) {
 
         Long memberId =  jwtTokenProvider.extractMemberId(request);
 
-        archivesService.updateArchive(archiveId, memberId, archiveDto);
+        archivesService.updateArchive(isbn, memberId, archiveDto);
 
         return ResponseEntity.ok("아카이브 수정이 완료되었습니다.");
     }

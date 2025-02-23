@@ -15,7 +15,7 @@ import yoon.bookproject.book_project_2025.service.MembersService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/members")
+@RequestMapping("/api/member")
 @Tag(name = "Members", description = "회원 관련 API")
 public class MembersController {
 

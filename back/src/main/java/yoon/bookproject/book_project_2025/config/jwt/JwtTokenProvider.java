@@ -133,7 +133,7 @@ public class JwtTokenProvider {
 
         //Authorization 헤더에서 토큰 추출
         String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith("Bearer")) {
             throw new RuntimeException("유효한 토큰이 존재하지 않습니다. 헤더가 null이거나 Bearer로 시작하지 않습니다.");
         }
         String token = authHeader.substring(7);

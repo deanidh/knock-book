@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/books")
+@RequestMapping("/api/book")
 @Tag(name = "Books", description = "책 관련 API")
 public class BooksController {
 
