@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import BookSearchedItem from '../components/BookItem';
+import BookSearchedItem from '../components/BookSearchedItem';
 import { BookSearched } from '../types/BookTypes';
+import { API } from '../API';
 
 const HomePage = () => {
   const [query, setQuery] = useState('');
@@ -38,12 +39,16 @@ const HomePage = () => {
     if (!query.trim()) return;
 
     try {
-      const response = await fetch(`http://192.168.0.32:8080/api/books/search?keyword=${query}`);
-      const data = await response.json();
+      const response = await API.books.search(query);
 
-      setSearchResult(data || []);
+      if (response.success) {
+        setSearchResult(response.data || []);
+      } else {
+        console.error('도서 검색 실패:', response.message);
+        setSearchResult([]);
+      }
     } catch (err) {
-      console.error('도서 검색 실패: ', err);
+      console.error('도서 검색 중 오류 발생:', err);
       setSearchResult([]);
     }
   };
