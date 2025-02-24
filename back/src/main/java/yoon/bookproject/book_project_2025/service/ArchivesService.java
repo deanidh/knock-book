@@ -30,7 +30,6 @@ public class ArchivesService {
         Archives archives = new Archives();
         archives.setMembers(members); //Member 엔티티 설정
         archives.setIsbn(archiveDto.getIsbn());
-        System.out.println(archiveDto.getIsbn());
         archives.setReadingStatus(null);
         archives.setCurrentPage(null);
         archives.setStartedAt(LocalDate.now());
@@ -60,7 +59,7 @@ public class ArchivesService {
 
     //아카이브 정보 수정
     public void updateArchive(String isbn, Long memberId, ArchiveDto archiveDto) {
-        Archives archive = archivesRepository.findByIsbn(isbn)
+        Archives archive = archivesRepository.findByIsbnAndMembers_memberId(isbn, memberId)
                 .orElseThrow(() -> new RuntimeException("해당 아카이브를 찾을 수 없습니다."));
 
         if (!archive.getMembers().getMemberId().equals(memberId)) {
