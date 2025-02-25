@@ -30,6 +30,11 @@ public class ArchivesService {
         Archives archives = new Archives();
         archives.setMembers(members); //Member 엔티티 설정
         archives.setIsbn(archiveDto.getIsbn());
+        archives.setTitle(archiveDto.getTitle());
+        archives.setAuthor(archiveDto.getAuthor());
+        archives.setPublisher(archiveDto.getPublisher());
+        archives.setImage(archiveDto.getImage());
+        archives.setLink(archiveDto.getLink());
         archives.setReadingStatus(null);
         archives.setCurrentPage(null);
         archives.setStartedAt(LocalDate.now());
@@ -60,7 +65,8 @@ public class ArchivesService {
     //아카이브 정보 수정
     public void updateArchive(String isbn, Long memberId, ArchiveDto archiveDto) {
         Archives archive = archivesRepository.findByIsbnAndMembers_memberId(isbn, memberId)
-                .orElseThrow(() -> new RuntimeException("해당 아카이브를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RuntimeException("해당 아카이브를 찾을 수 없습니다. 파라미터로 들어온 isbn : " + isbn +
+                         "파라미터로 들어온 memberId : " + memberId));
 
         if (!archive.getMembers().getMemberId().equals(memberId)) {
             throw new RuntimeException("수정 권한이 없습니다.");

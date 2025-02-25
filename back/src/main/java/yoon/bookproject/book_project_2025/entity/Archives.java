@@ -23,6 +23,16 @@ public class Archives {
     @Column(nullable = false)
     private String isbn;
 
+    private String title;
+
+    private String author;
+
+    private String publisher;
+
+    private String image;
+
+    private String link;
+
     private String readingStatus;
 
     private Integer currentPage;
