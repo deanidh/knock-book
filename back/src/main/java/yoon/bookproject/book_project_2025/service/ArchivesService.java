@@ -62,11 +62,37 @@ public class ArchivesService {
         return archivesRepository.findByMembers_memberId(memberId);
     }
 
+    //선택한 아카이브 상세 정보 조회
+    public ArchiveDto getArchiveDetail(Long archiveId, Long memberId) {
+        Archives archive = archivesRepository.findById(archiveId)
+                .orElseThrow(() -> new RuntimeException("아카이브를 찾을 수 없습니다. 아카이브 ID : " + archiveId));
+
+        if (!archive.getMembers().getMemberId().equals(memberId)) {
+            throw new RuntimeException("조회 권한이 없습니다.");
+        }
+
+        return ArchiveDto.builder()
+                .archiveId(archive.getArchiveId())
+                .memberId(archive.getMembers().getMemberId())
+                .isbn(archive.getIsbn())
+                .title(archive.getTitle())
+                .author(archive.getAuthor())
+                .publisher(archive.getPublisher())
+                .image(archive.getImage())
+                .link(archive.getLink())
+                .readingStatus(archive.getReadingStatus())
+                .currentPage(archive.getCurrentPage())
+                .startedAt(archive.getStartedAt())
+                .finishedAt(archive.getFinishedAt())
+                .review(archive.getReview())
+                .build();
+    }
+
     //아카이브 정보 수정
     public void updateArchive(String isbn, Long memberId, ArchiveDto archiveDto) {
         Archives archive = archivesRepository.findByIsbnAndMembers_memberId(isbn, memberId)
                 .orElseThrow(() -> new RuntimeException("해당 아카이브를 찾을 수 없습니다. 파라미터로 들어온 isbn : " + isbn +
-                         "파라미터로 들어온 memberId : " + memberId));
+                         ", 파라미터로 들어온 memberId : " + memberId));
 
         if (!archive.getMembers().getMemberId().equals(memberId)) {
             throw new RuntimeException("수정 권한이 없습니다.");

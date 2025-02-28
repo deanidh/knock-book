@@ -55,22 +55,26 @@ public class ArchivesController {
         List<ArchiveDto> archiveDtos = archivesList.stream().map(archives ->
                 ArchiveDto.builder()
                         .archiveId(archives.getArchiveId())
-                        .memberId(archives.getMembers().getMemberId())
                         .isbn(archives.getIsbn())
                         .title(archives.getTitle())
                         .author(archives.getAuthor())
                         .publisher(archives.getPublisher())
                         .image(archives.getImage())
-                        .link(archives.getLink())
                         .readingStatus(archives.getReadingStatus())
-                        .currentPage(archives.getCurrentPage())
-                        .startedAt(archives.getStartedAt())
-                        .finishedAt(archives.getFinishedAt())
-                        .review(archives.getReview())
                         .build()
         ).toList();
 
         return ResponseEntity.ok(archiveDtos);
+    }
+
+    //선택한 아카이브 상세 정보 조회
+    @GetMapping("/{archiveId}")
+    @Operation(summary = "아카이브 상세 조회 API", description = "선택한 아카이브의 상세 정보를 조회하는 API")
+    public ResponseEntity<ArchiveDto> getArchiveDetail(@PathVariable("archiveId") Long archiveId,
+                                                       HttpServletRequest request) {
+        Long memberId = jwtTokenProvider.extractMemberId(request);
+        ArchiveDto archiveDetail = archivesService.getArchiveDetail(archiveId, memberId);
+        return ResponseEntity.ok(archiveDetail);
     }
 
     //아카이브 정보 수정
