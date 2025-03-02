@@ -13,7 +13,7 @@ export const login = async (username: string, password: string) => {
 export const signup = async (username: string, password: string, nickname: string, phone: string) => {
   try {
     const response = await api.post('/member/signup', { username, password, nickname, phone });
-    return response.data; // 성공 시 데이터 반환
+    return response.data;
   } catch (error) {
     console.error('회원가입 실패:', error);
     throw new Error('회원가입에 실패했습니다. 입력 정보를 확인하세요.');

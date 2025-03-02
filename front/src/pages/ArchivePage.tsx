@@ -1,26 +1,8 @@
-import { useEffect, useState } from 'react';
-import { API } from '../API';
-import { Archive } from '../types/Archive';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
 
 const ArchivePage = () => {
-  const [archives, setArchives] = useState<Archive[]>([]);
-
-  const fetchArchives = async () => {
-    try {
-      const response = await API.archives.get();
-      if (!response.success) {
-        alert(response.message);
-        return;
-      }
-      setArchives(response.data);
-    } catch (err) {
-      console.error('아카이브 조회 실패:', err);
-    }
-  };
-
-  useEffect(() => {
-    fetchArchives();
-  }, []);
+  const archives = useSelector((state: RootState) => state.user.archives);
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">

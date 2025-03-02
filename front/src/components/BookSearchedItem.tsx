@@ -1,41 +1,33 @@
-import { useState, useEffect } from 'react';
 import { BookSearched } from '../types/BookSearched';
 import { API } from '../API';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../store/store';
+import { addArchive, removeArchive } from '../store/userSlice';
 
 interface Props {
   book: BookSearched;
 }
 
 const BookSearchedItem: React.FC<Props> = ({ book }) => {
-  const [isArchived, setIsArchived] = useState(false);
-
-  useEffect(() => {
-    const fetchArchives = async () => {
-      try {
-        const archives = await API.archives.get();
-        // const archivedBooks = archives.data.map((item: Archive) => item.isbn);
-        // setIsArchived(archivedBooks.includes(book.isbn));
-        console.log(archives);
-      } catch (err) {
-        console.error('아카이브 확인 실패:', err);
-      }
-    };
-    fetchArchives();
-  }, [book.isbn]);
+  const dispatch = useDispatch();
+  const archives = useSelector((state: RootState) => state.user.archives);
+  const currentArchive = archives.find((archive) => archive.isbn === book.isbn);
 
   const toggleArchive = async () => {
     try {
-      let response;
-      if (isArchived) {
-        response = await API.archives.remove(book.isbn);
+      if (currentArchive) {
+        await API.archives.remove(currentArchive.archiveId);
+        dispatch(removeArchive(currentArchive.archiveId));
       } else {
-        response = await API.archives.add(book.isbn, book.title, book.author, book.publisher, book.image, book.link);
-      }
-
-      if (response.success) {
-        setIsArchived(!isArchived);
-      } else {
-        alert(response.message || '아카이브 변경에 실패했습니다.');
+        const response = await API.archives.add(
+          book.isbn,
+          book.title,
+          book.author,
+          book.publisher,
+          book.image,
+          book.link
+        );
+        dispatch(addArchive(response.data));
       }
     } catch (err) {
       console.error('아카이브 변경 실패:', err);
@@ -65,7 +57,7 @@ const BookSearchedItem: React.FC<Props> = ({ book }) => {
 
       {/* ✅ 아카이브 버튼 */}
       <button onClick={toggleArchive} className="ml-4 text-xl">
-        {isArchived ? '⭐' : '☆'}
+        {currentArchive ? '⭐' : '☆'}
       </button>
     </div>
   );

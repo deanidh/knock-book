@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { API } from '../API';
+import { useDispatch } from 'react-redux';
+import { login, logout } from '../store/userSlice';
 
 const LoginPage = () => {
+  const dispatch = useDispatch();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [nickname, setNickname] = useState('');
@@ -27,7 +30,17 @@ const LoginPage = () => {
         : await API.members.signup(username, password, nickname, phone);
 
       if (isLogin) {
-        localStorage.setItem('accessToken', response.data.accessToken || '');
+        const archives = await API.archives.get();
+        dispatch(
+          login({
+            username: response.data.username,
+            nickname: response.data.nickname,
+            phone: response.data.phone,
+            isLogin: true,
+            archives: archives,
+          })
+        );
+        localStorage.setItem('accessToken', response.data.accessToken);
         setIsAuthenticated(true);
       }
       alert(`${isLogin ? '로그인' : '회원가입'} 성공`);
@@ -43,6 +56,7 @@ const LoginPage = () => {
     try {
       await API.members.logout();
 
+      dispatch(logout());
       localStorage.removeItem('accessToken');
       setIsAuthenticated(false);
       setUsername('');
