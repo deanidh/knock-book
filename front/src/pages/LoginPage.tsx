@@ -11,8 +11,8 @@ const LoginPage = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) setIsAuthenticated(true);
+    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) setIsAuthenticated(true);
   }, []);
 
   const handleSubmit = async () => {
@@ -26,38 +26,30 @@ const LoginPage = () => {
         ? await API.members.login(username, password)
         : await API.members.signup(username, password, nickname, phone);
 
-      if (response.success) {
-        if (isLogin) {
-          localStorage.setItem('token', response.data.accessToken || '');
-          setIsAuthenticated(true);
-        }
-        alert(isLogin ? '로그인 성공!' : '회원가입 성공');
-      } else {
-        throw new Error(response.message);
+      if (isLogin) {
+        localStorage.setItem('accessToken', response.data.accessToken || '');
+        setIsAuthenticated(true);
       }
+      alert(`${isLogin ? '로그인' : '회원가입'} 성공`);
     } catch (error) {
       console.error(error);
-      alert(error || '요청에 실패했습니다.');
+      alert(`${isLogin ? '로그인' : '회원가입'} 요청에 실패했습니다.`);
     }
   };
 
   const handleLogout = async () => {
-    if (!localStorage.getItem('token')) return;
+    if (!localStorage.getItem('accessToken')) return;
 
     try {
-      const response = await API.members.logout();
+      await API.members.logout();
 
-      if (response.success) {
-        localStorage.removeItem('token');
-        setIsAuthenticated(false);
-        setUsername('');
-        setPassword('');
-        setNickname('');
-        setPhone('');
-        alert('로그아웃 되었습니다.');
-      } else {
-        throw new Error(response.message);
-      }
+      localStorage.removeItem('accessToken');
+      setIsAuthenticated(false);
+      setUsername('');
+      setPassword('');
+      setNickname('');
+      setPhone('');
+      alert('로그아웃 되었습니다.');
     } catch (err) {
       console.error(err);
       alert('로그아웃 요청에 실패했습니다.');

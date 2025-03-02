@@ -10,9 +10,9 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  const accessToken = localStorage.getItem('accessToken');
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
   }
   return config;
 });
@@ -25,11 +25,11 @@ api.interceptors.response.use(
         const newAccessToken = await auth.refresh();
         if (newAccessToken) {
           error.config.headers.Authorization = `Bearer ${newAccessToken}`;
-          return api.request(error.config); // 요청 재시도
+          return api.request(error.config);
         }
       } catch (err) {
         console.error('토큰 갱신 실패', err);
-        localStorage.removeItem('token');
+        localStorage.removeItem('accessToken');
         window.location.href = '/login';
       }
     }

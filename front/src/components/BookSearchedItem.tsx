@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BookSearched } from '../types/BookTypes';
+import { BookSearched } from '../types/BookSearched';
 import { API } from '../API';
 
 interface Props {
@@ -29,7 +29,7 @@ const BookSearchedItem: React.FC<Props> = ({ book }) => {
       if (isArchived) {
         response = await API.archives.remove(book.isbn);
       } else {
-        response = await API.archives.add(book.isbn);
+        response = await API.archives.add(book.isbn, book.title, book.author, book.publisher, book.image, book.link);
       }
 
       if (response.success) {

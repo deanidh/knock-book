@@ -1,10 +1,15 @@
 export interface Archive {
-  archiveId: number;
-  memberId: number;
+  archiveId: string;
+  memberId: string | null;
   isbn: string;
-  readingStatus: string;
-  currentPage: number;
-  startedAt: string;
-  finishedAt: string;
-  review: string;
+  title: string;
+  author: string;
+  publisher: string;
+  image: string;
+  link: string | null;
+  readingStatus: 'reading' | 'completed' | 'not_started';
+  currentPage: number | null;
+  startedAt: string | null;
+  finishedAt: string | null;
+  review: string | null;
 }
