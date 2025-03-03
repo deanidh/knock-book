@@ -1,15 +1,18 @@
 import api from '.';
 
-export const refresh = async () => {
+export const refresh = async (username: string) => {
+  console.log('refresh 실행');
   try {
     const refreshToken = localStorage.getItem('refreshToken');
-    if (!refreshToken) return { success: false, message: '리프레시 토큰이 없습니다.' };
+    if (!refreshToken) {
+      throw new Error('리프레시 토큰이 없습니다.');
+    }
 
-    const response = await api.post(`/members/refresh`, { refreshToken });
+    const response = await api.post('/auth/reissue', { username, refreshToken });
 
-    return { success: true, token: response.data.accessToken };
+    return response.data;
   } catch (error) {
     console.error('토큰 갱신 실패:', error);
-    return { success: false, message: '토큰 갱신에 실패했습니다. 다시 로그인하세요.' };
+    throw new Error('토큰 갱신에 실패했습니다. 다시 로그인하세요.');
   }
 };
