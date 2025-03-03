@@ -30,18 +30,22 @@ const LoginPage = () => {
         : await API.members.signup(username, password, nickname, phone);
 
       if (isLogin) {
+        console.log(response);
+        localStorage.setItem('accessToken', response.accessToken);
+        localStorage.setItem('refreshToken', response.refreshToken);
+        localStorage.setItem('username', username);
+        setIsAuth(true);
         const archives = await API.archives.get();
+
+        console.log(response);
         dispatch(
           login({
-            username: response.data.username,
-            nickname: response.data.nickname,
-            phone: response.data.phone,
-            isLogin: true,
+            username: username,
+            nickname: nickname,
+            phone: phone,
             archives: archives,
           })
         );
-        localStorage.setItem('accessToken', response.data.accessToken);
-        setIsAuth(true);
       }
       alert(`${isLogin ? '로그인' : '회원가입'} 성공`);
     } catch (error) {
@@ -58,6 +62,9 @@ const LoginPage = () => {
 
       dispatch(logout());
       localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('username');
+
       setIsAuth(false);
       setUsername('');
       setPassword('');

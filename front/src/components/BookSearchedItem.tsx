@@ -27,7 +27,8 @@ const BookSearchedItem: React.FC<Props> = ({ book }) => {
           book.image,
           book.link
         );
-        dispatch(addArchive(response.data));
+        console.log(response);
+        dispatch(addArchive(response));
       }
     } catch (err) {
       console.error('아카이브 변경 실패:', err);

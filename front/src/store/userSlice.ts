@@ -31,14 +31,24 @@ const userSlice = createSlice({
       state.phone = null;
       state.archives = [];
     },
+    setArchives(state, action) {
+      state.archives = action.payload;
+      console.log(action.payload);
+    },
     addArchive(state, action) {
       state.archives.push(action.payload);
     },
     removeArchive(state, action) {
       state.archives = state.archives.filter((archive) => archive.archiveId !== action.payload);
     },
+    updateArchive(state, action) {
+      const index = state.archives.findIndex((archive) => archive.isbn === action.payload.isbn);
+      if (index !== -1) {
+        state.archives[index] = { ...state.archives[index], ...action.payload };
+      }
+    },
   },
 });
 
-export const { login, logout, addArchive, removeArchive } = userSlice.actions;
+export const { login, logout, addArchive, removeArchive, updateArchive, setArchives } = userSlice.actions;
 export default userSlice;

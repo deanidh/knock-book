@@ -27,10 +27,9 @@ export const add = async (
   }
 };
 
-export const remove = async (isbn: string) => {
+export const remove = async (archiveId: string) => {
   try {
-    console.log(isbn);
-    const response = await api.delete(`/archive/${isbn}`);
+    const response = await api.delete(`/archive/${archiveId}`);
     return response.data;
   } catch (error) {
     console.error('아카이브 삭제 실패:', error);
@@ -38,16 +37,22 @@ export const remove = async (isbn: string) => {
   }
 };
 
-export const modify = async (
-  isbn: string,
-  readingStatus: string,
+export const update = async (
+  archiveId: string,
+  readingStatus: 'reading' | 'completed' | 'not_started',
   currentPage: number,
   startedAt: string,
   finishedAt: string,
   review: string
 ) => {
   try {
-    const response = await api.put(`/archive/${isbn}`, { readingStatus, currentPage, startedAt, finishedAt, review });
+    const response = await api.put(`/archive/${archiveId}`, {
+      readingStatus,
+      currentPage,
+      startedAt,
+      finishedAt,
+      review,
+    });
     return response.data;
   } catch (error) {
     console.error('아카이브 수정 실패:', error);

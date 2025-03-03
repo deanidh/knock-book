@@ -5,7 +5,7 @@ import * as archives from './archives';
 import * as members from './members';
 
 const api = axios.create({
-  baseURL: 'http://192.168.0.13:8080/api',
+  baseURL: 'http://192.168.0.5:8080/api',
   headers: { 'Content-Type': 'application/json' },
 });
 
@@ -20,11 +20,18 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401) {
+    console.log(error);
+    if (error.response?.status === 403) {
       try {
-        const newAccessToken = await auth.refresh();
+        const username = localStorage.getItem('username');
+        const response = await auth.refresh(username!);
+        const newAccessToken = response.accessToken;
+        const newRefreshToken = response.refreshToken;
+
         if (newAccessToken) {
           error.config.headers.Authorization = `Bearer ${newAccessToken}`;
+          localStorage.setItem('accessToken', newAccessToken);
+          localStorage.setItem('refreshToken', newRefreshToken);
           return api.request(error.config);
         }
       } catch (err) {
