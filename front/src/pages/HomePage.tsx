@@ -30,7 +30,7 @@ const HomePage = () => {
           className="w-full p-3 border rounded-md shadow-md"
           placeholder="검색할 책의 정보를 입력하세요..."
         />
-        <button onClick={searchBooks} className="mt-2 w-full  p-3  bg-blue-400 text-white rounded-md shadow-md">
+        <button onClick={searchBooks} className="mt-2 w-full  p-3  bg-amber-400 text-black rounded-md shadow-md">
           검색
         </button>
       </div>
