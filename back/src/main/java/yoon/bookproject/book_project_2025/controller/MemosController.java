@@ -2,8 +2,10 @@ package yoon.bookproject.book_project_2025.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import yoon.bookproject.book_project_2025.config.jwt.JwtTokenProvider;
 import yoon.bookproject.book_project_2025.dto.MemoDto;
 import yoon.bookproject.book_project_2025.service.MemosService;
 
@@ -15,9 +17,11 @@ import java.util.List;
 public class MemosController {
 
     private final MemosService memosService;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public MemosController(MemosService memosService) {
+    public MemosController(MemosService memosService, JwtTokenProvider jwtTokenProvider) {
         this.memosService = memosService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     //메모 작성
@@ -35,5 +39,14 @@ public class MemosController {
     public ResponseEntity<List<MemoDto>> getMemos(@PathVariable("archiveId") Long archiveId) {
         List<MemoDto> memos = memosService.getMemos(archiveId);
         return ResponseEntity.ok(memos);
+    }
+
+    //메모 삭제
+    @DeleteMapping("/{memoId}")
+    @Operation(summary = "메모 삭제 API", description = "책에 작성된 메모를 삭제하는 API")
+    public ResponseEntity<String> deleteMemo(@PathVariable("memoId") Long memoId, HttpServletRequest request) {
+        Long memberId = jwtTokenProvider.extractMemberId(request);
+        memosService.deleteMemo(memoId, memberId);
+        return ResponseEntity.ok("메모가 삭제되었습니다.");
     }
 }

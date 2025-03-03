@@ -22,7 +22,7 @@ public class ArchivesService {
     }
 
     //아카이브 추가
-    public void addArchives(ArchiveDto archiveDto) {
+    public ArchiveDto addArchives(ArchiveDto archiveDto) {
         Members members = membersRepository.findById(archiveDto.getMemberId())
                 .orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."));
 
@@ -41,13 +41,23 @@ public class ArchivesService {
         archives.setFinishedAt(null);
         archives.setReview(null);
 
-        archivesRepository.save(archives);
+        Archives savedArchive = archivesRepository.save(archives);
+
+        return ArchiveDto.builder()
+                .archiveId(savedArchive.getArchiveId())
+                .isbn(savedArchive.getIsbn())
+                .title(savedArchive.getTitle())
+                .author(savedArchive.getAuthor())
+                .publisher(savedArchive.getPublisher())
+                .image(savedArchive.getImage())
+                .link(savedArchive.getLink())
+                .build();
     }
 
     //아카이브 삭제
-    public void deleteArchives(String isbn, Long memberId) {
-        Archives archives = archivesRepository.findByIsbn(isbn)
-                .orElseThrow(() -> new RuntimeException("아카이브를 찾을 수 없습니다. 파라미터로 들어온 ISBN : " + isbn));
+    public void deleteArchives(Long archiveId, Long memberId) {
+        Archives archives = archivesRepository.findById(archiveId)
+                .orElseThrow(() -> new RuntimeException("아카이브를 찾을 수 없습니다. 파라미터로 들어온 ID : " + archiveId));
 
         //연관된 Member의 member_id와 요청의 memberId를 비교하여 권한 검증
         if (!archives.getMembers().getMemberId().equals(memberId)) {
@@ -89,9 +99,9 @@ public class ArchivesService {
     }
 
     //아카이브 정보 수정
-    public void updateArchive(String isbn, Long memberId, ArchiveDto archiveDto) {
-        Archives archive = archivesRepository.findByIsbnAndMembers_memberId(isbn, memberId)
-                .orElseThrow(() -> new RuntimeException("해당 아카이브를 찾을 수 없습니다. 파라미터로 들어온 isbn : " + isbn +
+    public void updateArchive(Long archiveId, Long memberId, ArchiveDto archiveDto) {
+        Archives archive = archivesRepository.findByArchiveIdAndMembers_memberId(archiveId, memberId)
+                .orElseThrow(() -> new RuntimeException("해당 아카이브를 찾을 수 없습니다. 파라미터로 들어온 ID : " + archiveId +
                          ", 파라미터로 들어온 memberId : " + memberId));
 
         if (!archive.getMembers().getMemberId().equals(memberId)) {

@@ -28,19 +28,19 @@ public class ArchivesController {
     //아카이브에 책 추가
     @PostMapping("/add")
     @Operation(summary = "아카이브 추가 API", description = "원하는 책을 아카이브에 추가하는 API")
-    public ResponseEntity<String> addArchives(@RequestBody ArchiveDto archiveDto, HttpServletRequest request) {
+    public ResponseEntity<ArchiveDto> addArchives(@RequestBody ArchiveDto archiveDto, HttpServletRequest request) {
         Long memberId = jwtTokenProvider.extractMemberId(request);
         archiveDto.setMemberId(memberId);
-        archivesService.addArchives(archiveDto);
-        return ResponseEntity.ok("아카이브에 추가되었습니다.");
+        ArchiveDto savedArchive = archivesService.addArchives(archiveDto);
+        return ResponseEntity.ok(savedArchive);
     }
 
     //아카이브에서 책 삭제
-    @DeleteMapping("/{isbn}")
+    @DeleteMapping("/{archiveId}")
     @Operation(summary = "아카이브 삭제 API", description = "원하는 책을 아카이브에서 삭제하는 API")
-    public ResponseEntity<String> deleteArchives(@PathVariable("isbn") String isbn, HttpServletRequest request) {
+    public ResponseEntity<String> deleteArchives(@PathVariable("archiveId") Long archiveId, HttpServletRequest request) {
         Long memberId = jwtTokenProvider.extractMemberId(request);
-        archivesService.deleteArchives(isbn, memberId);
+        archivesService.deleteArchives(archiveId, memberId);
         return ResponseEntity.ok("아카이브에서 삭제되었습니다.");
     }
 
@@ -60,7 +60,12 @@ public class ArchivesController {
                         .author(archives.getAuthor())
                         .publisher(archives.getPublisher())
                         .image(archives.getImage())
+                        .link(archives.getLink())
                         .readingStatus(archives.getReadingStatus())
+                        .currentPage(archives.getCurrentPage())
+                        .startedAt(archives.getStartedAt())
+                        .finishedAt(archives.getFinishedAt())
+                        .review(archives.getReview())
                         .build()
         ).toList();
 
@@ -78,15 +83,15 @@ public class ArchivesController {
     }
 
     //아카이브 정보 수정
-    @PutMapping("/{isbn}")
+    @PutMapping("/{archiveId}")
     @Operation(summary = "아카이브 정보 수정 API", description = "아카이브의 정보를 수정하는 API")
-    public ResponseEntity<String> updateArchives(@PathVariable("isbn") String isbn,
+    public ResponseEntity<String> updateArchives(@PathVariable("archiveId") Long archiveId,
                                                  @RequestBody ArchiveDto archiveDto,
                                                  HttpServletRequest request) {
 
         Long memberId =  jwtTokenProvider.extractMemberId(request);
 
-        archivesService.updateArchive(isbn, memberId, archiveDto);
+        archivesService.updateArchive(archiveId, memberId, archiveDto);
 
         return ResponseEntity.ok("아카이브 수정이 완료되었습니다.");
     }

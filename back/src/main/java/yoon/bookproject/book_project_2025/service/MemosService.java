@@ -58,4 +58,16 @@ public class MemosService {
                         .build())
                 .collect(Collectors.toList());
     }
+
+    //메모 삭제
+    public void deleteMemo(Long memoId, Long memberId) {
+        Memos memo = memosRepository.findById(memoId)
+                .orElseThrow(() -> new RuntimeException("메모를 찾을 수 없습니다. memoId : " + memoId));
+
+        if (!memo.getArchives().getMembers().getMemberId().equals(memberId)) {
+            throw new RuntimeException("삭제 권한이 없습니다.");
+        }
+
+        memosRepository.delete(memo);
+    }
 }
