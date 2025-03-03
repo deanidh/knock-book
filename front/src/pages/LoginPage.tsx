@@ -1,18 +1,21 @@
 import { useState, useEffect } from 'react';
 import { API } from '../API';
+import { useDispatch } from 'react-redux';
+import { login, logout } from '../store/userSlice';
 
 const LoginPage = () => {
+  const dispatch = useDispatch();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [nickname, setNickname] = useState('');
   const [phone, setPhone] = useState('');
 
   const [isLogin, setIsLogin] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuth, setIsAuth] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) setIsAuthenticated(true);
+    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) setIsAuth(true);
   }, []);
 
   const handleSubmit = async () => {
@@ -26,38 +29,48 @@ const LoginPage = () => {
         ? await API.members.login(username, password)
         : await API.members.signup(username, password, nickname, phone);
 
-      if (response.success) {
-        if (isLogin) {
-          localStorage.setItem('token', response.data.accessToken || '');
-          setIsAuthenticated(true);
-        }
-        alert(isLogin ? '로그인 성공!' : '회원가입 성공');
-      } else {
-        throw new Error(response.message);
+      if (isLogin) {
+        console.log(response);
+        localStorage.setItem('accessToken', response.accessToken);
+        localStorage.setItem('refreshToken', response.refreshToken);
+        localStorage.setItem('username', username);
+        setIsAuth(true);
+        const archives = await API.archives.get();
+
+        console.log(response);
+        dispatch(
+          login({
+            username: username,
+            nickname: nickname,
+            phone: phone,
+            archives: archives,
+          })
+        );
       }
+      alert(`${isLogin ? '로그인' : '회원가입'} 성공`);
     } catch (error) {
       console.error(error);
-      alert(error || '요청에 실패했습니다.');
+      alert(`${isLogin ? '로그인' : '회원가입'} 요청에 실패했습니다.`);
     }
   };
 
   const handleLogout = async () => {
-    if (!localStorage.getItem('token')) return;
+    if (!localStorage.getItem('accessToken')) return;
 
     try {
-      const response = await API.members.logout();
+      await API.members.logout();
 
-      if (response.success) {
-        localStorage.removeItem('token');
-        setIsAuthenticated(false);
-        setUsername('');
-        setPassword('');
-        setNickname('');
-        setPhone('');
-        alert('로그아웃 되었습니다.');
-      } else {
-        throw new Error(response.message);
-      }
+      dispatch(logout());
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('username');
+
+      setIsAuth(false);
+      setUsername('');
+      setPassword('');
+      setNickname('');
+      setPhone('');
+      alert('로그아웃 되었습니다.');
     } catch (err) {
       console.error(err);
       alert('로그아웃 요청에 실패했습니다.');
@@ -67,7 +80,7 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 shadow-lg rounded-lg w-96">
-        {isAuthenticated ? (
+        {isAuth ? (
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-6">로그인 상태</h2>
             <button
