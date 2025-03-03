@@ -18,6 +18,11 @@ public class ArchiveDto {
     private Long archiveId;
     private Long memberId;
     private String isbn;
+    private String title;
+    private String author;
+    private String publisher;
+    private String image;
+    private String link;
     private String readingStatus;
     private Integer currentPage;
     private LocalDate startedAt;
