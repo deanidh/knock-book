@@ -11,11 +11,11 @@ const LoginPage = () => {
   const [phone, setPhone] = useState('');
 
   const [isLogin, setIsLogin] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuth, setIsAuth] = useState(false);
 
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken');
-    if (accessToken) setIsAuthenticated(true);
+    if (accessToken) setIsAuth(true);
   }, []);
 
   const handleSubmit = async () => {
@@ -41,7 +41,7 @@ const LoginPage = () => {
           })
         );
         localStorage.setItem('accessToken', response.data.accessToken);
-        setIsAuthenticated(true);
+        setIsAuth(true);
       }
       alert(`${isLogin ? '로그인' : '회원가입'} 성공`);
     } catch (error) {
@@ -58,7 +58,7 @@ const LoginPage = () => {
 
       dispatch(logout());
       localStorage.removeItem('accessToken');
-      setIsAuthenticated(false);
+      setIsAuth(false);
       setUsername('');
       setPassword('');
       setNickname('');
@@ -73,7 +73,7 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 shadow-lg rounded-lg w-96">
-        {isAuthenticated ? (
+        {isAuth ? (
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-6">로그인 상태</h2>
             <button
