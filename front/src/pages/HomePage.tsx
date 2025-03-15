@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import BookSearchedItem from '../components/BookSearchedItem';
 import { BookSearched } from '../types/BookSearched';
 import { API } from '../API';
@@ -7,15 +7,24 @@ const HomePage = () => {
   const [query, setQuery] = useState('');
   const [searchResult, setSearchResult] = useState<BookSearched[]>([]);
 
+  useEffect(() => {
+    const savedResult = localStorage.getItem('searchResult');
+    if (savedResult) {
+      setSearchResult(JSON.parse(savedResult));
+    }
+  }, []);
+
   const searchBooks = async () => {
     if (!query.trim()) return;
 
     try {
       const result = await API.books.search(query);
       setSearchResult(result);
+      localStorage.setItem('searchResult', JSON.stringify(result));
     } catch (err) {
       console.error('도서 검색 중 오류 발생:', err);
       setSearchResult([]);
+      localStorage.removeItem('searchResult');
     }
   };
 
@@ -41,7 +50,7 @@ const HomePage = () => {
         {searchResult.length > 0 ? (
           searchResult.map((book) => <BookSearchedItem key={book.isbn} book={book} />)
         ) : (
-          <p className="text-center col-span-full">책을 검색해주세요.</p>
+          <p className="text-center col-span-full">검색된 책이 없습니다.</p>
         )}
       </div>
     </div>
