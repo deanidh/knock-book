@@ -3,6 +3,7 @@ import * as books from './books';
 import * as auth from './auth';
 import * as archives from './archives';
 import * as members from './members';
+import store from '../store/store';
 
 const api = axios.create({
   baseURL: 'https://port-0-bookhive-deploy-test-m7u9xakd7a7ad425.sel4.cloudtype.app/api',
@@ -23,7 +24,9 @@ api.interceptors.response.use(
     console.log(error);
     if (error.response?.status === 403) {
       try {
-        const username = localStorage.getItem('username');
+        const state = store.getState();
+        const username = state.user.username;
+
         const response = await auth.refresh(username!);
         const newAccessToken = response.accessToken;
         const newRefreshToken = response.refreshToken;

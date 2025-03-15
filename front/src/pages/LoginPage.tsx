@@ -1,22 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { API } from '../API';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { login, logout } from '../store/userSlice';
+import { RootState } from '../store/store';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const isAuth = useSelector((state: RootState) => state.user.isLoggedIn);
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [nickname, setNickname] = useState('');
   const [phone, setPhone] = useState('');
 
   const [isLogin, setIsLogin] = useState(true);
-  const [isAuth, setIsAuth] = useState(false);
-
-  useEffect(() => {
-    const accessToken = localStorage.getItem('accessToken');
-    if (accessToken) setIsAuth(true);
-  }, []);
 
   const handleSubmit = async () => {
     if (!username || !password) {
@@ -30,14 +29,10 @@ const LoginPage = () => {
         : await API.members.signup(username, password, nickname, phone);
 
       if (isLogin) {
-        console.log(response);
         localStorage.setItem('accessToken', response.accessToken);
         localStorage.setItem('refreshToken', response.refreshToken);
-        localStorage.setItem('username', username);
-        setIsAuth(true);
         const archives = await API.archives.get();
 
-        console.log(response);
         dispatch(
           login({
             username: username,
@@ -48,6 +43,7 @@ const LoginPage = () => {
         );
       }
       alert(`${isLogin ? '로그인' : '회원가입'} 성공`);
+      navigate('/');
     } catch (error) {
       console.error(error);
       alert(`${isLogin ? '로그인' : '회원가입'} 요청에 실패했습니다.`);
@@ -55,17 +51,12 @@ const LoginPage = () => {
   };
 
   const handleLogout = async () => {
-    if (!localStorage.getItem('accessToken')) return;
-
     try {
       await API.members.logout();
-
       dispatch(logout());
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
-      localStorage.removeItem('username');
 
-      setIsAuth(false);
       setUsername('');
       setPassword('');
       setNickname('');
