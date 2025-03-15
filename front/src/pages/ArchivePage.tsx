@@ -35,7 +35,10 @@ const ArchivePage = () => {
       )}
 
       {selectedBook && (
-        <div className="fixed inset-0 bg-black/30 flex justify-center items-center p-32">
+        <div
+          className="fixed inset-0 bg-black/30 flex justify-center items-center "
+          onClick={() => setSelectedBook(null)}
+        >
           <ReadingPage book={selectedBook} onClose={() => setSelectedBook(null)} />
         </div>
       )}
