@@ -9,13 +9,16 @@ interface UserState {
   archives: Archive[];
 }
 
-const initialState: UserState = {
-  isLoggedIn: localStorage.getItem('user') ? true : false,
-  username: null,
-  nickname: null,
-  phone: null,
-  archives: [],
-};
+const savedUser = localStorage.getItem('user');
+const initialState: UserState = savedUser
+  ? JSON.parse(savedUser)
+  : {
+      isLoggedIn: false,
+      username: null,
+      nickname: null,
+      phone: null,
+      archives: [],
+    };
 
 const userSlice = createSlice({
   name: 'user',

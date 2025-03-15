@@ -1,14 +1,12 @@
 import { useState } from 'react';
 import { API } from '../API';
-import { useDispatch, useSelector } from 'react-redux';
-import { login, logout } from '../store/userSlice';
-import { RootState } from '../store/store';
+import { useDispatch } from 'react-redux';
+import { login } from '../store/userSlice';
 import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const isAuth = useSelector((state: RootState) => state.user.isLoggedIn);
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -50,86 +48,54 @@ const LoginPage = () => {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await API.members.logout();
-      dispatch(logout());
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-
-      setUsername('');
-      setPassword('');
-      setNickname('');
-      setPhone('');
-      alert('로그아웃 되었습니다.');
-    } catch (err) {
-      console.error(err);
-      alert('로그아웃 요청에 실패했습니다.');
-    }
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 shadow-lg rounded-lg w-96">
-        {isAuth ? (
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-6">로그인 상태</h2>
-            <button
-              onClick={handleLogout}
-              className="w-full bg-red-500 text-white p-3 rounded-md hover:bg-red-600 transition"
-            >
-              로그아웃
-            </button>
-          </div>
-        ) : (
+        <h2 className="text-2xl font-bold text-center mb-12">{isLogin ? '로그인' : '회원가입'}</h2>
+        <input
+          type="text"
+          placeholder="아이디 입력"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="w-full p-3 border rounded-md mb-4 focus:outline-none focus:ring-1 focus:ring-amber-400 focus:border-amber-400"
+        />
+        <input
+          type="password"
+          placeholder="비밀번호 입력"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full p-3 border rounded-md mb-4 focus:outline-none focus:ring-1 focus:ring-amber-400 focus:border-amber-400"
+        />
+        {!isLogin && (
           <>
-            <h2 className="text-2xl font-bold text-center mb-12">{isLogin ? '로그인' : '회원가입'}</h2>
             <input
               type="text"
-              placeholder="아이디 입력"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full p-3 border rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder="닉네임 입력"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+              className="w-full p-3 border rounded-md mb-4 focus:outline-none focus:ring-1 focus:ring-amber-400 focus:border-amber-400"
             />
             <input
-              type="password"
-              placeholder="비밀번호 입력"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 border rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              type="text"
+              placeholder="전화번호 입력"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="w-full p-3 border rounded-md mb-4 focus:outline-none focus:ring-1 focus:ring-amber-400 focus:border-amber-400"
             />
-            {!isLogin && (
-              <>
-                <input
-                  type="text"
-                  placeholder="닉네임 입력"
-                  value={nickname}
-                  onChange={(e) => setNickname(e.target.value)}
-                  className="w-full p-3 border rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
-                <input
-                  type="text"
-                  placeholder="전화번호 입력"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full p-3 border rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
-              </>
-            )}
-            <button
-              onClick={handleSubmit}
-              className="w-full bg-blue-500 text-white mt-4 p-3 rounded-md hover:bg-blue-600 transition"
-            >
-              {isLogin ? '로그인' : '회원가입'}
-            </button>
-            <p className="mt-4 text-center text-gray-600">
-              {isLogin ? '계정이 없으신가요?' : '이미 계정이 있으신가요?'}
-              <button onClick={() => setIsLogin(!isLogin)} className="text-blue-500 ml-2 hover:underline">
-                {isLogin ? '회원가입' : '로그인'}
-              </button>
-            </p>
           </>
         )}
+        <button
+          onClick={handleSubmit}
+          className="w-full bg-amber-400 text-black mt-4 p-3 rounded-md hover:bg-amber-600 transition"
+        >
+          {isLogin ? '로그인' : '회원가입'}
+        </button>
+        <p className="mt-4 text-center text-gray-600">
+          {isLogin ? '계정이 없으신가요?' : '이미 계정이 있으신가요?'}
+          <button onClick={() => setIsLogin(!isLogin)} className="text-amber-600 ml-2 hover:underline">
+            {isLogin ? '회원가입' : '로그인'}
+          </button>
+        </p>
       </div>
     </div>
   );

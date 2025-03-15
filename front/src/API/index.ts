@@ -4,6 +4,7 @@ import * as auth from './auth';
 import * as archives from './archives';
 import * as members from './members';
 import store from '../store/store';
+import { logout } from '../store/userSlice';
 
 const api = axios.create({
   baseURL: 'https://port-0-bookhive-deploy-test-m7u9xakd7a7ad425.sel4.cloudtype.app/api',
@@ -40,6 +41,10 @@ api.interceptors.response.use(
       } catch (err) {
         console.error('토큰 갱신 실패', err);
         localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+
+        store.dispatch(logout());
+        await members.logout();
         window.location.href = '/login';
       }
     }

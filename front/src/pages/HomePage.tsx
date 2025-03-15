@@ -27,10 +27,13 @@ const HomePage = () => {
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="w-full p-3 border rounded-md shadow-md"
+          className="w-full p-3 border rounded-md shadow-md focus:outline-none focus:ring-1 focus:ring-amber-400 focus:border-amber-400 "
           placeholder="검색할 책의 정보를 입력하세요..."
         />
-        <button onClick={searchBooks} className="mt-2 w-full  p-3  bg-amber-400 text-black rounded-md shadow-md">
+        <button
+          onClick={searchBooks}
+          className="mt-2 w-full  p-3  bg-amber-400 hover:bg-amber-500 text-black rounded-md shadow-md"
+        >
           검색
         </button>
       </div>

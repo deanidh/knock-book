@@ -3,6 +3,7 @@ import { API } from '../API';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 import { addArchive, removeArchive } from '../store/userSlice';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   book: BookSearched;
@@ -10,10 +11,24 @@ interface Props {
 
 const BookSearchedItem: React.FC<Props> = ({ book }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const isAuth = useSelector((state: RootState) => state.user.isLoggedIn);
   const archives = useSelector((state: RootState) => state.user.archives);
   const currentArchive = archives.find((archive) => archive.isbn === book.isbn);
 
   const toggleArchive = async () => {
+    if (!isAuth) {
+      const confirmLogin = window.confirm(
+        '아카이브에 담기 위해서는 로그인이 필요합니다. \n로그인 페이지로 이동하시겠습니까?'
+      );
+
+      if (confirmLogin) {
+        navigate('/login');
+      }
+
+      return;
+    }
+
     try {
       if (currentArchive) {
         await API.archives.remove(currentArchive.archiveId);
