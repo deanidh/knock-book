@@ -31,7 +31,7 @@ public class JwtTokenProvider {
     private final Key key;
     private final MembersRepository membersRepository;
     public static final long ACCESS_TIME = Duration.ofMinutes(30).toMillis(); // 만료시간 30분
-    public static final long REFRESH_TIME = Duration.ofDays(14).toMillis(); // 만료시간 2주
+    public static final long REFRESH_TIME = Duration.ofDays(5).toMillis(); // 만료시간 5일
 
     public JwtTokenProvider(@Value("${jwt.secret}") String secretKey, MembersRepository membersRepository) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);

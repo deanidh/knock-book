@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.jackson.Jacksonized;
-import yoon.bookproject.book_project_2025.entity.Members;
 
 import java.time.LocalDate;
 
