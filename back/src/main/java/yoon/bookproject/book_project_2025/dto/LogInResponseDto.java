@@ -8,9 +8,14 @@ import lombok.Data;
 @Data
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-public class JwtToken {
+public class LogInResponseDto {
+
     private String grantType;
     private String accessToken;
     private String refreshToken;
     private Long refreshTokenExpiresIn;
+
+    private String username;
+    private String nickname;
+    private String phone;
 }

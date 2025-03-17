@@ -5,11 +5,13 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yoon.bookproject.book_project_2025.config.jwt.JwtTokenProvider;
 import yoon.bookproject.book_project_2025.dto.JwtToken;
+import yoon.bookproject.book_project_2025.dto.LogInResponseDto;
 import yoon.bookproject.book_project_2025.dto.SignUpDto;
 import yoon.bookproject.book_project_2025.entity.Members;
 import yoon.bookproject.book_project_2025.repository.MembersRepository;
@@ -51,7 +53,7 @@ public class MembersService {
     }
 
     @Transactional
-    public JwtToken login(String username, String password) {
+    public LogInResponseDto login(String username, String password) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
@@ -60,7 +62,18 @@ public class MembersService {
         redisTemplate.opsForValue().set("RT:" + authentication.getName(),
                 jwtToken.getRefreshToken(), jwtToken.getRefreshTokenExpiresIn(), TimeUnit.MILLISECONDS);
 
-        return jwtToken;
+        Members member = membersRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+
+        return LogInResponseDto.builder()
+                .grantType(jwtToken.getGrantType())
+                .accessToken(jwtToken.getAccessToken())
+                .refreshToken(jwtToken.getRefreshToken())
+                .refreshTokenExpiresIn(jwtToken.getRefreshTokenExpiresIn())
+                .username(member.getUsername())
+                .nickname(member.getNickname())
+                .phone(member.getPhone())
+                .build();
     }
 
     @Transactional

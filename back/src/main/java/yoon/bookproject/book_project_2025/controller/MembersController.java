@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import yoon.bookproject.book_project_2025.dto.JwtToken;
+import yoon.bookproject.book_project_2025.dto.LogInResponseDto;
 import yoon.bookproject.book_project_2025.dto.LogInDto;
 import yoon.bookproject.book_project_2025.dto.SignUpDto;
 import yoon.bookproject.book_project_2025.entity.Members;
@@ -30,7 +30,7 @@ public class MembersController {
 
     @PostMapping("/login")
     @Operation(summary = "로그인", description = "로그인 API")
-    public ResponseEntity<JwtToken> login(@Valid @RequestBody LogInDto logInDto) {
+    public ResponseEntity<LogInResponseDto> login(@Valid @RequestBody LogInDto logInDto) {
         return ResponseEntity.ok()
                 .body(memberService.login(logInDto.getUsername(), logInDto.getPassword()));
     }

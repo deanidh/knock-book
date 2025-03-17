@@ -34,7 +34,7 @@ public class BooksController {
         try {
             // 검색어를 URL 인코딩
             String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
-            String apiURL = "https://openapi.naver.com/v1/search/book.json?query=" + encodedKeyword;
+            String apiURL = "https://openapi.naver.com/v1/search/book.json?display=30&query=" + encodedKeyword;
 
             // 네이버 API 호출
             URL url = new URL(apiURL);
