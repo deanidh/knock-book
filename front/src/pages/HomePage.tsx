@@ -20,7 +20,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
+    <div className="h-full bg-gray-100 p-4">
       <h1 className="text-4xl font-bold text-center mt-8 mb-8">도서 검색</h1>
       <div className="max-w-md mx-auto mb-6">
         <input
@@ -30,13 +30,18 @@ const HomePage = () => {
           className="w-full p-3 border rounded-md shadow-md"
           placeholder="검색할 책의 정보를 입력하세요..."
         />
-        <button onClick={searchBooks} className="mt-2 w-full  p-3  bg-amber-400 text-black rounded-md shadow-md">
+        <button
+          onClick={searchBooks}
+          className="mt-2 w-full  p-3  bg-amber-400 text-black rounded-md shadow-md"
+        >
           검색
         </button>
       </div>
       <div className="grid grid-cols-1 gap-6">
         {searchResult.length > 0 ? (
-          searchResult.map((book) => <BookSearchedItem key={book.isbn} book={book} />)
+          searchResult.map((book) => (
+            <BookSearchedItem key={book.isbn} book={book} />
+          ))
         ) : (
           <p className="text-center col-span-full">책을 검색해주세요.</p>
         )}

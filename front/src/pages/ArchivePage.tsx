@@ -87,7 +87,7 @@ const ArchivePage = () => {
   const [selectedBook, setSelectedBook] = useState<Archive | null>(null);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
+    <div className="h-full bg-gray-100 p-4">
       {archives.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
           {archives.map((book) => (
@@ -97,11 +97,17 @@ const ArchivePage = () => {
               className="cursor-pointer bg-white shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105 flex flex-col h-full"
             >
               <div className="bg-gray-300 flex justify-center items-center h-64">
-                <img src={book.image} alt={book.title} className="max-h-full object-contain" />
+                <img
+                  src={book.image}
+                  alt={book.title}
+                  className="max-h-full object-contain"
+                />
               </div>
 
               <div className="p-4 flex flex-col flex-grow justify-between">
-                <h2 className="text-lg font-semibold line-clamp-2">{book.title}</h2>
+                <h2 className="text-lg font-semibold line-clamp-2">
+                  {book.title}
+                </h2>
                 <p className="text-gray-500">{book.author}</p>
               </div>
             </div>
@@ -113,7 +119,10 @@ const ArchivePage = () => {
 
       {selectedBook && (
         <div className="fixed inset-0 bg-black/30 flex justify-center items-center p-32">
-          <ReadingPage book={selectedBook} onClose={() => setSelectedBook(null)} />
+          <ReadingPage
+            book={selectedBook}
+            onClose={() => setSelectedBook(null)}
+          />
         </div>
       )}
     </div>

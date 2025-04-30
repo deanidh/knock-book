@@ -25,12 +25,18 @@ function App() {
 
   return (
     <Router>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/archive" element={<ArchivePage />} />
-        <Route path="/login" element={<LoginPage />} />
-      </Routes>
+      <div className="flex w-screen h-screen">
+        <Navbar />
+        <div className="w-full h-full bg-gray-200 p-6">
+          <div className="w-full h-full rounded-2xl overflow-hidden">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/archive" element={<ArchivePage />} />
+              <Route path="/login" element={<LoginPage />} />
+            </Routes>
+          </div>
+        </div>
+      </div>
     </Router>
   );
 }

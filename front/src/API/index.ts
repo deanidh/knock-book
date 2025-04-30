@@ -5,7 +5,7 @@ import * as archives from './archives';
 import * as members from './members';
 
 const api = axios.create({
-  baseURL: 'http://192.168.0.5:8080/api',
+  baseURL: 'https://port-0-bookhive-deploy-test-m7u9xakd7a7ad425.sel4.cloudtype.app/api',
   headers: { 'Content-Type': 'application/json' },
 });
 
